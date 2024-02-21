@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SSH Terminal</title>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', (event) => {
+            var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + '/ssh');
+            socket.on('connect', function() {
+                socket.emit('start_ssh', {
+                    'hostname': 'your_ssh_server_ip',
+                    'username': 'your_username',
+                    'key_path': 'path_to_your_private_key'
+                });
+            });
+
+            socket.on('ssh_response', function(msg) {
+                var terminal = document.getElementById('terminal');
+                terminal.innerHTML += msg.data;
+                terminal.scrollTop = terminal.scrollHeight;
+            });
+
+            window.sendCommand = function(e) {
+                if (e.keyCode == 13) {
+                    var input = document.getElementById('commandInput');
+                    socket.emit('ssh_command', {'data': input.value});
+                    input.value = '';
+                }
+            }
+        });
+    </script>
+</head>
+<body>
+    <div id="terminal" style="background-color: black; color: white; padding: 10px; height: 300px; overflow-y: scroll;"></div>
+    <input type="text" id="commandInput" onkeydown="sendCommand(event)" autofocus />
+</body>
+</html>
+
