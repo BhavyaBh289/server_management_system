@@ -5,7 +5,7 @@ from paramiko.ssh_exception import NoValidConnectionsError, SSHException
 from threading import Lock
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'your_strong_secret_key'
+app.config['SECRET_KEY'] = 'your_secret_key'
 socketio = SocketIO(app)
 
 ssh_client = None
