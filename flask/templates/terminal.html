@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SSH Terminal - {{ server_name }}</title>
+    <link rel="stylesheet" href="https://unpkg.com/xterm/css/xterm.css" />
+    <script src="https://unpkg.com/xterm"></script>
+    <script src="https://unpkg.com/xterm-addon-fit"></script>
+    <script src="https://cdn.socket.io/4.1.2/socket.io.min.js"></script>
+</head>
+<body>
+    <h1>SSH Terminal - {{ server_name }}</h1>
+    <div id="terminal"></div>
+
+  <script>
+      const socket = io.connect('http://' + document.domain + ':' + location.port + '/ws');
+
+      socket.on('message', function(data) {
+          if (data.server_name === '{{ server_name }}') {
+              term.write(data.output);
+          }
+      });
+
+      const term = new Terminal();
+      term.open(document.getElementById('terminal'));
+
+      term.onData(data => {
+          socket.emit('execute_command', {'server_name': '{{ server_name }}', 'command': data});
+      });
+
+      term.onResize(size => {
+          socket.emit('resize', {'server_name': '{{ server_name }}', 'cols': size.cols, 'rows': size.rows});
+      });
+
+      const fitAddon = new FitAddon.FitAddon();
+      term.loadAddon(fitAddon);
+      fitAddon.fit();
+
+      window.addEventListener('resize', () => {
+          fitAddon.fit();
+          socket.emit('resize', {'server_name': '{{ server_name }}', 'cols': term.cols, 'rows': term.rows});
+      });
+  </script>
+
+</body>
+</html>

@@ -6,58 +6,11 @@
     <title>SSH Terminal</title>
 </head>
 <body>
-    <h1>SSH Terminal</h1>
-
-    <form id="sshForm">
-        <label for="hostname">Hostname:</label>
-        <input type="text" id="hostname" name="hostname" required><br>
-
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" required><br>
-
-        <label for="key_path">Key Path:</label>
-        <input type="text" id="key_path" name="key_path" required><br>
-
-        <label for="port">Port:</label>
-        <input type="number" id="port" name="port" value="22"><br>
-
-        <button type="button" onclick="connectSSH()">Connect</button>
-    </form>
-
-    <hr>
-
-    <div>
-        <h2>SSH Output:</h2>
-        <textarea id="sshOutput" rows="10" cols="50" readonly></textarea>
-
-        <label for="command">Command:</label>
-        <input type="text" id="command" name="command">
-        <button type="button" onclick="sendCommand()">Send Command</button>
-    </div>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.2/socket.io.js"></script>
-    <script>
-        var socket = io.connect('http://' + document.domain + ':' + location.port + '/ssh');
-
-        socket.on('ssh_response', function(data) {
-            document.getElementById('sshOutput').value += data.data + '\n';
-        });
-
-        function connectSSH() {
-            var form = document.getElementById('sshForm');
-            var formData = new FormData(form);
-
-            socket.emit('disconnect');
-            socket.emit('start_ssh', formData);
-        }
-
-        function sendCommand() {
-            var commandInput = document.getElementById('command');
-            var command = commandInput.value;
-
-            socket.emit('ssh_command', {'data': command});
-            commandInput.value = '';
-        }
-    </script>
+    <h1>SSH Terminal - Choose a Server</h1>
+    <ul>
+        {% for server_name, _ in servers.items() %}
+            <li><a href="{{ url_for('connect', server_name=server_name) }}">{{ server_name }}</a></li>
+        {% endfor %}
+    </ul>
 </body>
 </html>
