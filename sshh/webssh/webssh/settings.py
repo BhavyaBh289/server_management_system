@@ -10,14 +10,6 @@ from policy import (
 from utils import (
     to_ip_address, parse_origin_from_url, is_valid_encoding
 )
-from _version import __version__
-
-
-def print_version(flag):
-    if flag:
-        print(__version__)
-        sys.exit(0)
-
 
 define('address', default='', help='Listen address')
 define('port', type=int, default=8888,  help='Listen port')
@@ -51,9 +43,6 @@ define('font', default='', help='custom font filename')
 define('encoding', default='',
        help='''The default character encoding of ssh servers.
 Example: --encoding='utf-8' to solve the problem with some switches&routers''')
-define('version', type=bool, help='Show version information',
-       callback=print_version)
-
 
 base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 font_dirs = ['webssh', 'static', 'css', 'fonts']
