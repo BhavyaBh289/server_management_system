@@ -48,15 +48,11 @@ class SSHClient(paramiko.SSHClient):
             prompt = prompt_.strip().lower()
             if prompt.startswith('password'):
                 answers.append(self.password)
-            elif prompt.startswith('verification'):
-                answers.append(self.totp)
             else:
                 raise ValueError('Unknown prompt: {}'.format(prompt_))
         return answers
 
     def auth_interactive(self, username, handler):
-        if not self.totp:
-            raise ValueError('Need a verification code for 2fa.')
         self._transport.auth_interactive(username, handler)
 
     def _auth(self, username, password, pkey, *args):
@@ -394,7 +390,7 @@ class IndexHandler(MixinHandler, tornado.web.RequestHandler):
         password = self.get_argument('password', u'')
         privatekey, filename = self.get_privatekey()
         passphrase = self.get_argument('passphrase', u'')
-        totp = self.get_argument('totp', u'')
+
 
         if isinstance(self.policy, paramiko.RejectPolicy):
             self.lookup_hostname(hostname, port)
@@ -404,7 +400,7 @@ class IndexHandler(MixinHandler, tornado.web.RequestHandler):
         else:
             pkey = None
 
-        self.ssh_client.totp = totp
+
         args = (hostname, port, username, password, pkey)
         logging.debug(args)
 
