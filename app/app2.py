@@ -60,12 +60,18 @@ def ssh_disconnect():
 @socketio.on('ssh_command', namespace='/ssh')
 def handle_ssh_command(command):
     session_id = request.args.get('session_id')
+
     if session_id in ssh_clients:
         responses = []
+        responses.append("")
+        responses.append(command['data'])
         for hostname, ssh in ssh_clients[session_id]:
             stdin, stdout, stderr = ssh.exec_command(command['data'])
             output = stdout.read().decode()
             responses.append(f"{hostname}:\n{output}")
+        responses.append(" ")
+        responses.append(" ")
+        responses.append(" ")
 
         emit('ssh_response', {'data': "\n".join(responses)})
     else:
