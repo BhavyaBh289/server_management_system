@@ -3,7 +3,7 @@ from flask_socketio import SocketIO, emit
 import paramiko
 
 app = Flask(__name__)
-app.config["SECRET_KEY"] = "your_secret_key"
+app.config["SECRET_KEY"] = "edity70"
 socketio = SocketIO(app)
 
 ssh_clients = {}
@@ -16,7 +16,7 @@ def index():
 def ssh_connect():
     ssh_key_path = request.form['ssh_key_path']
     username = request.form['username']
-    hostnames = request.form['hostname'].split(' ')  # Multiple hostnames separated by commas
+    hostnames = request.form['hostname'].split(' ')
     port = request.form.get('port', 22)
 
     session_id = request.remote_addr  # Use client IP as session ID
