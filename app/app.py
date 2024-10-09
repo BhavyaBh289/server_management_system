@@ -59,8 +59,8 @@ def handle_ssh_command(command):
         ssh = ssh_clients[session_id]
         stdin, stdout, stderr = ssh.exec_command(command['data'])
         output = stdout.read().decode()
-
         emit('ssh_response', {'data': command['data']+"\n"+ output})
+
     else:
         emit('ssh_response', {'data': 'SSH session not found'})
 
